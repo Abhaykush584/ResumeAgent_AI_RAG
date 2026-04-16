@@ -1,15 +1,69 @@
-# Python cache
+# # Python cache
+# __pycache__/
+# *.pyc
+
+# # Environment variables
+# .env
+# backend/.env
+
+# # Runtime / session data
+# backend/vector_dbs/
+
+# # OS files
+# .DS_Store
+
+# venv/
+
+
+
+
+
+
+
+
+
+
+# ── Secrets (NEVER commit these) ──────────────────────────
+.env
+*.pem
+*.key
+*.p12
+
+# ── Python ─────────────────────────────────────────────────
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
 
-# Environment variables
-.env
-backend/.env
+# ── Node / Frontend ────────────────────────────────────────
+node_modules/
+frontend/dist/
+frontend/.vite/
+*.log
+npm-debug.log*
 
-# Runtime / session data
-backend/vector_dbs/
+# ── Uploaded files (user data, not code) ──────────────────
+backend/uploaded_files/
 
-# OS files
+# ── Docker ─────────────────────────────────────────────────
+*.tar
+
+# ── IDEs ───────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
 .DS_Store
 
-venv/
+# ── Large files ────────────────────────────────────────────
+*.pdf
+*.docx
+*.png
+*.jpg
+*.jpeg

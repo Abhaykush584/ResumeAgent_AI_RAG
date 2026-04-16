@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+# ============================================================
+# pre-commit hook — Resume2Job
+# Blocks: large files, API keys, AWS credentials, .env commits
+#
+# Install:  cp scripts/pre-commit .git/hooks/pre-commit
+#           chmod +x .git/hooks/pre-commit
+# ============================================================
+
+set -e
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+echo -e "${YELLOW}[pre-commit] Running checks...${NC}"
+
+ERRORS=0
+
+# ── 1. Block large files (>5 MB) ───────────────────────────
+MAX_SIZE=5242880   # 5 MB in bytes
+
+while IFS= read -r -d '' file; do
+    size=$(stat -c%s "$file" 2>/dev/null || stat -f%z "$file" 2>/dev/null)
+    if [ "$size" -gt "$MAX_SIZE" ]; then
+        echo -e "${RED}[BLOCKED] Large file detected: $file ($size bytes > 5MB)${NC}"
+        echo "  Use Git LFS or add to .gitignore"
+        ERRORS=$((ERRORS + 1))
+    fi
+done < <(git diff --cached --name-only -z)
+
+# ── 2. Block .env file commits ─────────────────────────────
+if git diff --cached --name-only | grep -qE '^\.env$'; then
+    echo -e "${RED}[BLOCKED] .env file is staged for commit!${NC}"
+    echo "  Run: git reset HEAD .env"
+    ERRORS=$((ERRORS + 1))
+fi
+
+# ── 3. Scan for secrets / API keys ─────────────────────────
+SECRET_PATTERNS=(
+    "APP_API_KEY\s*=\s*[A-Za-z0-9_-]{20,}"
+    "AIza[0-9A-Za-z_-]{35}"          # Google API key pattern
+    "AKIA[0-9A-Z]{16}"               # AWS Access Key ID
+    "aws_secret_access_key\s*=\s*[A-Za-z0-9/+=]{40}"
+    "password\s*=\s*['\"][^'\"]{8,}"
+    "secret_key\s*=\s*['\"][^'\"]{8,}"
+    "-----BEGIN (RSA |EC )?PRIVATE KEY-----"
+)
+
+for file in $(git diff --cached --name-only); do
+    [ -f "$file" ] || continue
+    for pattern in "${SECRET_PATTERNS[@]}"; do
+        if git show ":$file" 2>/dev/null | grep -qiE "$pattern"; then
+            echo -e "${RED}[BLOCKED] Possible secret in $file (pattern: $pattern)${NC}"
+            echo "  Remove the secret and use environment variables instead."
+            ERRORS=$((ERRORS + 1))
+        fi
+    done
+done
+
+# ── 4. Block PDF/image/binary data files ───────────────────
+BLOCKED_EXTENSIONS="\.pdf$|\.docx$|\.doc$|\.pkl$|\.model$"
+if git diff --cached --name-only | grep -qiE "$BLOCKED_EXTENSIONS"; then
+    echo -e "${RED}[BLOCKED] Binary/data file staged for commit:${NC}"
+    git diff --cached --name-only | grep -iE "$BLOCKED_EXTENSIONS"
+    echo "  Add these files to .gitignore"
+    ERRORS=$((ERRORS + 1))
+fi
+
+# ── Result ─────────────────────────────────────────────────
+if [ "$ERRORS" -gt 0 ]; then
+    echo -e "\n${RED}[pre-commit FAILED] $ERRORS issue(s) found. Commit blocked.${NC}"
+    exit 1
+fi
+
+echo -e "${GREEN}[pre-commit PASSED] All checks clean.${NC}"
+exit 0
