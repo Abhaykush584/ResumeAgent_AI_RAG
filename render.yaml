@@ -1,16 +1,16 @@
+databases:
+  # 1. PostgreSQL Database
+  - name: resume2job-db
+    plan: free
+    postgresMajorVersion: 16
+
 services:
-  # 1. Redis Cache
+  # 2. Redis Cache
   - type: redis
     name: resume2job-redis
     ipAllowList: [] # only allow internal connections
     plan: free
     maxmemoryPolicy: noeviction
-
-databases:
-  # 2. PostgreSQL Database
-  - name: resume2job-db
-    plan: free
-    postgresMajorVersion: 16
 
   # 3. Flask Backend
   - type: web
