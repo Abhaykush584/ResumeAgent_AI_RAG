@@ -87,7 +87,7 @@ Vercel (React Frontend)
 4. Configure the Web Service:
    - **Environment:** `Python`
    - **Build Command:** `pip install -r backend/requirements.txt`
-   - **Start Command:** `gunicorn -b 0.0.0.0:$PORT -w 4 'backend.app:app'`
+   - **Start Command:** `cd backend && gunicorn -b 0.0.0.0:$PORT -w 4 'app:app'`
 5. Add the following **Environment Variables** in the Web Service settings:
    - `FLASK_ENV`: `production`
    - `SECRET_KEY`: `(type any random string)`
