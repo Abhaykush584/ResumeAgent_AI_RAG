@@ -165,7 +165,7 @@ def extract_from_image(path):
     img = Image.open(path)
 
     response = client.models.generate_content(
-        model="gemini-1.5-flash",
+        model="gemini-3.5-flash",
         contents=[
             img,
             "Extract all text from this image. Return ONLY plain text."
@@ -180,17 +180,23 @@ def extract_from_image(path):
 def chunk_jd(text):
     client = get_gemini_client()
 
-    response = client.models.generate_content(
-        model="gemini-1.5-flash",
-        contents=[
-            text,
-            (
-                "Split this job description into meaningful chunks. "
-                "Return ONLY valid JSON in this format:\n"
-                "[{\"chunk_text\": \"...\", \"section\": \"job_description\"}]"
-            )
-        ]
-    )
+    from tenacity import retry, stop_after_attempt, wait_exponential
+
+    @retry(stop=stop_after_attempt(5), wait=wait_exponential(multiplier=1, min=2, max=10))
+    def _call_gemini():
+        return client.models.generate_content(
+            model="gemini-3.5-flash",
+            contents=[
+                text,
+                (
+                    "Split this job description into meaningful chunks. "
+                    "Return ONLY valid JSON in this format:\n"
+                    "[{\"chunk_text\": \"...\", \"section\": \"job_description\"}]"
+                )
+            ]
+        )
+
+    response = _call_gemini()
 
     raw = response.text.strip()
 
@@ -223,3 +229,4 @@ def process_jd_and_embed(file_path, session_id):
 
     chunks = chunk_jd(text)
     embed_chunks(chunks, session_id, "jd")
+    return text

@@ -1,0 +1,20 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://your-render-backend-url.onrender.com/api/$1"
+    },
+    {
+      "source": "/query",
+      "destination": "https://your-render-backend-url.onrender.com/query"
+    },
+    {
+      "source": "/upload",
+      "destination": "https://your-render-backend-url.onrender.com/upload"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

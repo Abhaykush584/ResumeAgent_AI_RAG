@@ -3,79 +3,39 @@
 [![React](https://img.shields.io/badge/Frontend-React-61DAFB?logo=react&logoColor=white)](https://react.dev/)
 [![Flask](https://img.shields.io/badge/Backend-Flask-000000?logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
 [![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-336791?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
-[![Redis](https://img.shields.io/badge/Cache-Redis-DC382D?logo=redis&logoColor=white)](https://redis.io/)
-[![Docker](https://img.shields.io/badge/DevOps-Docker-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
-[![AWS EC2](https://img.shields.io/badge/Cloud-AWS%20EC2-FF9900?logo=amazonaws&logoColor=white)](https://aws.amazon.com/ec2/)
+[![Pinecone](https://img.shields.io/badge/Vector_DB-Pinecone-000000?logo=pinecone&logoColor=white)](https://www.pinecone.io/)
+[![Vercel](https://img.shields.io/badge/Hosting-Vercel-000000?logo=vercel&logoColor=white)](https://vercel.com/)
+[![Render](https://img.shields.io/badge/Hosting-Render-46E3B7?logo=render&logoColor=white)](https://render.com/)
 
-ResumeAgent AI is a **full-stack AI-powered resume analysis platform** that compares a candidate's resume against a job description and generates **structured, career-focused feedback**.
+ResumeAgent AI is a **full-stack AI-powered resume analysis platform** that acts as an elite Career Advisor. It performs deep Retrieval-Augmented Generation (RAG) by comparing a candidate's resume against a job description and generating **structured, highly-actionable career feedback**.
 
-It is designed as a **portfolio-grade engineering project** to showcase **LLM integration, document processing, full-stack development, Dockerized deployment, AWS hosting, and CI/CD workflow design**.
-
-## Live Demo
-
-**Live App:** `http://3.87.127.127:8080`
+It is designed as a **portfolio-grade engineering project** to showcase **Advanced Prompt Engineering, RAG implementation, full-stack development, serverless deployment, and CI/CD workflow design**.
 
 ## Features
 
-- Upload resume in `PDF`, `DOCX`, `TXT`, or image-based formats
-- Upload or paste a job description
-- Extract and clean text from uploaded files
-- Chunk resume and JD content for better prompt structuring
-- Generate AI-based qualification analysis using Gemini
-- Return clear, structured responses instead of vague long-form output
-- Support adaptive response depth:
-  - Short answers by default
-  - Detailed guidance when explicitly requested
-- Render AI output cleanly in Markdown
-- Run the full stack using Docker Compose
-- Support deployment on AWS EC2 with containerized services
-
-## How It Works
-
-1. The user uploads a resume and job description.
-2. The backend extracts text from both documents.
-3. The content is cleaned, sectioned, and chunked.
-4. The system stores relevant session-level data.
-5. The user asks a question such as:
-   - `Am I qualified for this role?`
-   - `What are my gaps?`
-   - `How can I improve my chances?`
-6. Resume and JD chunks are injected into a structured Gemini prompt.
-7. The model returns a focused analysis with verdict, strengths, gaps, and improvement guidance.
-8. The frontend displays the result in a readable Markdown format.
+- **Authentication:** Secure user accounts via JWT.
+- **Persistent Chat History:** Seamlessly revisit past resume analysis sessions saved in PostgreSQL.
+- **State-of-the-art RAG:** Extracts text from PDFs/DOCX, chunks it, embeds it via Gemini, and stores it in **Pinecone** for extremely fast, persistent semantic search.
+- **Advanced Prompt Engineering:** Instructs the LLM using Few-Shot prompting and Chain of Thought reasoning for structured Markdown outputs.
+- **Cloud-Native Deployment:** Separated frontend (Vercel) and backend (Render) for infinite scalability and zero local port conflicts.
 
 ## Tech Stack
 
 ### Frontend
-- React
-- Vite
-- Fetch API
-- React Markdown
-- Nginx
+- React + Vite
+- Tailwind CSS
+- Vercel (Hosting)
 
 ### Backend
-- Python
-- Flask
-- Flask-CORS
-- Gunicorn
-- Background threading
+- Python (Flask)
+- PostgreSQL (User & Chat Data)
+- Redis (Session Caching)
+- Render (PaaS Hosting)
 
 ### AI / LLM
-- Google Gemini API
-- Prompt engineering
-- Response-mode control through prompts
-
-### Database / Cache
-- PostgreSQL
-- Redis
-
-### DevOps / Deployment
-- Docker
-- Docker Compose
-- AWS EC2
-- Amazon ECR
-- GitHub Actions
-- Linux / Ubuntu CLI
+- Google Gemini API (Embeddings & Generation)
+- Pinecone (Cloud Vector Database)
+- LangChain
 
 ## Architecture
 
@@ -83,136 +43,58 @@ It is designed as a **portfolio-grade engineering project** to showcase **LLM in
 User Browser
     |
     v
-Nginx (Frontend Container)
-    |
-    +--> React App
+Vercel (React Frontend)
     |
     +--> Proxy/API Requests
              |
              v
-        Flask Backend
+        Render (Flask Backend)
              |
-             +--> Gemini API
-             +--> PostgreSQL
-             +--> Redis
+             +--> Gemini API (LLM & Embeddings)
+             +--> Pinecone (Vector Search)
+             +--> PostgreSQL (Chat History)
 ```
-## Project Structure 
-```text
-├── backend/
-│   ├── app.py
-│   ├── extraction/
-│   ├── processing/
-│   ├── matching/
-│   ├── utils/
-│   ├── Dockerfile
-│   └── requirements.txt
-│
-├── frontend/
-│   ├── public/
-│   ├── src/
-│   │   └── Resume2Job.jsx
-│   ├── Dockerfile
-│   ├── nginx.conf
-│   └── package.json
-│
-├── docker-compose.yml
-├── .env.example
-├── scripts/
-└── README.md
-```
-### Local Setup
-1. Clone the repository
-git clone <your-repo-url>
-cd Resume2Job
-2. Create environment variables
-cp .env.example .env
-3. Add your values in .env
-APP_API_KEY=your_gemini_api_key
-POSTGRES_USER=resume2job
-POSTGRES_PASSWORD=your_password
-POSTGRES_DB=resume2job_db
-REDIS_PASSWORD=your_redis_password
-FRONTEND_PORT=8080
-4. Run the project
-docker-compose up -d --build
-5. Access the app
-http://localhost:8080
 
-### AWS EC2 Deployment
+## Local Development (Docker Compose)
 
-1. Connect to EC2
-ssh -i /path/to/key.pem ubuntu@<EC2_PUBLIC_IP>
-2. Clone the project
-git clone <your-repo-url> ~/resume2job
-cd ~/resume2job
-3. Create .env
-cp .env.example .env
-nano .env
-4. Start containers
-sudo docker-compose up -d --build
-5. Open the app
-http://<EC2_PUBLIC_IP>:8080
-6. Useful debug commands
-sudo docker ps
-sudo docker-compose ps
-sudo docker logs --tail 100 resume2job_backend
-sudo docker logs --tail 100 resume2job_frontend
-df -h
-sudo docker system prune -af
-sudo docker builder prune -af
+1. Clone the repository:
+   ```bash
+   git clone <your-repo-url>
+   cd ResumeAgent_AI_RAG
+   ```
+2. Create `.env` from `.env.example` and add your keys:
+   ```bash
+   APP_API_KEY=your_gemini_api_key
+   PINECONE_API_KEY=your_pinecone_api_key
+   ```
+3. Run the project:
+   ```bash
+   docker-compose up -d --build
+   ```
+4. Access the app at `http://localhost:8080`
+
+## Deployment Guides
+
+### 1. Frontend (Vercel)
+1. Push this repository to GitHub.
+2. Log into [Vercel](https://vercel.com/) and click **Add New Project**.
+3. Import your GitHub repository.
+4. Set the Framework Preset to **Vite**.
+5. Once your Render backend is live, update the `vercel.json` file's `destination` URLs to match your Render backend URL, and commit the change to trigger an auto-deploy!
+
+### 2. Backend (Render)
+1. Log into [Render](https://render.com/) and go to **Blueprints**.
+2. Connect your GitHub repository.
+3. Render will automatically read the `render.yaml` file in this repository and provision a PostgreSQL database, a Redis cache, and the Flask backend web service!
+4. Go to your new Web Service on the Render dashboard -> Environment, and manually add your `APP_API_KEY` and `PINECONE_API_KEY`.
 
 ### CI/CD Workflow
-This project includes a CI/CD design with:
+Because we are utilizing Vercel and Render's native GitHub integrations, **CI/CD is handled automatically**. 
+Every time you `git push origin main`:
+1. Vercel detects the change and builds/deploys the React frontend.
+2. Render detects the change and builds/deploys the Flask backend.
 
-1.GitHub Actions for linting, testing, and build automation
-2.Amazon ECR for Docker image storage
-3.EC2 deployment through SSH
-4.Environment variable injection through secrets
-5.Typical pipeline flow
-6.Push code to main
-7.Run backend lint/tests
-8.Run frontend lint/build
-9.Build Docker images
-Push images to ECR
-SSH into EC2 and redeploy containers
-
-### Key Engineering Highlights
-
-1.Built a full-stack AI application with clear frontend-backend separation
-2.Integrated Gemini for structured career-response generation
-3.Added Dockerized multi-service deployment using React, Flask, Postgres, and Redis
-4.Deployed and debugged the application on AWS EC2
-5.Worked with Linux server commands, logs, networking, and Docker runtime issues
-6.Designed CI/CD workflow using GitHub Actions and ECR-based deployment
-
-### Solved real deployment issues such as:
-1.Port conflicts
-2.Dependency mismatches
-3.Service restart failures
-4.Security group access
-5.Disk space exhaustion on cloud instances
-
-### Limitations
-1.No embeddings-based semantic similarity search
-2.Session handling is lightweight and not production-grade persistent memory
-3.Output quality depends on resume and JD input quality
-4.Not optimized for large-scale concurrent traffic
-5.Built primarily as a learning and portfolio project
-
-### Future Improvements
-1.Add authentication and user accounts
-2.Add persistent session history
-3.Introduce embeddings-based similarity search
-4.Add async task queue for document processing
-5.Use custom domain + HTTPS
-6.Improve production hardening and monitoring
-
-#### Author
-Abhay Kush
-
-
-> github.com/abhaykush584
-> LinkedIn link
-
-
-
+## Author
+**Abhay Kush**
+> [GitHub](https://github.com/abhaykush584)
+> [LinkedIn]
