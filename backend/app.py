@@ -37,7 +37,11 @@ db_name = os.getenv("POSTGRES_DB", "resume2job")
 db_pass_encoded = urllib.parse.quote_plus(db_pass)
 db_url = f"postgresql://{db_user}:{db_pass_encoded}@db:5432/{db_name}"
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL", db_url)
+raw_db_url = os.getenv("DATABASE_URL", db_url)
+if raw_db_url.startswith("postgres://"):
+    raw_db_url = raw_db_url.replace("postgres://", "postgresql://", 1)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = raw_db_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = os.getenv("JWT_SECRET_KEY", "super-secret-key-change-me")
 
