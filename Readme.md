@@ -16,7 +16,6 @@ It is designed as a **portfolio-grade engineering project** to showcase **Advanc
 - **Authentication:** Secure user accounts via JWT.
 - **Persistent Chat History:** Seamlessly revisit past resume analysis sessions saved in PostgreSQL.
 - **State-of-the-art RAG:** Extracts text from PDFs/DOCX, chunks it, embeds it via Gemini, and stores it in **Pinecone** for extremely fast, persistent semantic search.
-- **Advanced Prompt Engineering:** Instructs the LLM using Few-Shot prompting and Chain of Thought reasoning for structured Markdown outputs.
 - **Cloud-Native Deployment:** Separated frontend (Vercel) and backend (Render) for infinite scalability and zero local port conflicts.
 
 ## Tech Stack
@@ -29,7 +28,6 @@ It is designed as a **portfolio-grade engineering project** to showcase **Advanc
 ### Backend
 - Python (Flask)
 - PostgreSQL (User & Chat Data)
-- Redis (Session Caching)
 - Render (PaaS Hosting)
 
 ### AI / LLM
@@ -83,10 +81,21 @@ Vercel (React Frontend)
 5. Once your Render backend is live, update the `vercel.json` file's `destination` URLs to match your Render backend URL, and commit the change to trigger an auto-deploy!
 
 ### 2. Backend (Render)
-1. Log into [Render](https://render.com/) and go to **Blueprints**.
-2. Connect your GitHub repository.
-3. Render will automatically read the `render.yaml` file in this repository and provision a PostgreSQL database, a Redis cache, and the Flask backend web service!
-4. Go to your new Web Service on the Render dashboard -> Environment, and manually add your `APP_API_KEY` and `PINECONE_API_KEY`.
+1. Log into [Render](https://render.com/). Do **not** use Blueprints (to avoid card requirements).
+2. **Create Database:** Click `New +` -> `PostgreSQL`. Select the Free tier and create it. Once created, copy the "Internal Database URL".
+3. **Create Web Service:** Click `New +` -> `Web Service`. Connect your GitHub repository.
+4. Configure the Web Service:
+   - **Environment:** `Python`
+   - **Build Command:** `pip install -r backend/requirements.txt`
+   - **Start Command:** `gunicorn -b 0.0.0.0:$PORT -w 4 'backend.app:app'`
+5. Add the following **Environment Variables** in the Web Service settings:
+   - `FLASK_ENV`: `production`
+   - `SECRET_KEY`: `(type any random string)`
+   - `DATABASE_URL`: `(paste Internal Database URL from Step 2)`
+   - `APP_API_KEY`: `(your Gemini API key)`
+   - `PINECONE_API_KEY`: `(your Pinecone API key)`
+   - `PINECONE_INDEX_NAME`: `resume2job-index`
+6. Click Deploy!
 
 ### CI/CD Workflow
 Because we are utilizing Vercel and Render's native GitHub integrations, **CI/CD is handled automatically**. 
