@@ -62,6 +62,10 @@ app.register_blueprint(settings_bp, url_prefix='/api/settings')
 app.register_blueprint(chat_bp, url_prefix='/api/chat')
 app.register_blueprint(analysis_bp, url_prefix='/api/analysis')
 
+# Create database tables automatically if they don't exist
+with app.app_context():
+    db.create_all()
+
 # =========================
 # Gemini Config
 # =========================
