@@ -56,7 +56,7 @@ def extract_from_image(path):
     @retry(stop=stop_after_attempt(5), wait=wait_exponential(multiplier=1, min=2, max=10))
     def _call_gemini():
         return client.models.generate_content(
-            model="gemini-3.5-flash",
+            model="gemini-2.5-flash",
             contents=[
                 img,
                 "Extract all text from this image. Return ONLY plain text."
