@@ -2,15 +2,15 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "https://your-render-backend-url.onrender.com/api/$1"
+      "destination": "https://resumeagent-ai-rag-1.onrender.com/api/$1"
     },
     {
       "source": "/query",
-      "destination": "https://your-render-backend-url.onrender.com/query"
+      "destination": "https://resumeagent-ai-rag-1.onrender.com/query"
     },
     {
       "source": "/upload",
-      "destination": "https://your-render-backend-url.onrender.com/upload"
+      "destination": "https://resumeagent-ai-rag-1.onrender.com/upload"
     },
     {
       "source": "/(.*)",
