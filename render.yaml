@@ -6,9 +6,9 @@ services:
     plan: free
     maxmemoryPolicy: noeviction
 
+databases:
   # 2. PostgreSQL Database
-  - type: psql
-    name: resume2job-db
+  - name: resume2job-db
     plan: free
     postgresMajorVersion: 16
 
