@@ -7,15 +7,19 @@ chat_bp = Blueprint('chat', __name__)
 @chat_bp.route('/sessions', methods=['GET'])
 @jwt_required()
 def get_sessions():
-    user_id = get_jwt_identity()
-    sessions = ChatSession.query.filter_by(user_id=user_id).order_by(ChatSession.created_at.desc()).all()
-    return jsonify([
-        {
-            "id": s.id,
-            "title": s.title,
-            "created_at": s.created_at.isoformat()
-        } for s in sessions
-    ]), 200
+    try:
+        user_id = get_jwt_identity()
+        sessions = ChatSession.query.filter_by(user_id=user_id).order_by(ChatSession.created_at.desc()).all()
+        return jsonify([
+            {
+                "id": s.id,
+                "title": s.title,
+                "created_at": s.created_at.isoformat()
+            } for s in sessions
+        ]), 200
+    except Exception as e:
+        import traceback
+        return jsonify({"msg": "Internal server error", "error": str(e), "trace": traceback.format_exc()}), 500
 
 @chat_bp.route('/<session_id>/history', methods=['GET'])
 @jwt_required()

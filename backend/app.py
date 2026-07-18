@@ -190,7 +190,8 @@ def upload_files():
     except Exception as e:
         print("Error processing upload:", e)
         db.session.rollback()
-        return jsonify({"msg": "Error analyzing files. Please try again."}), 500
+        import traceback
+        return jsonify({"msg": "Error analyzing files. Please try again.", "error": str(e), "trace": traceback.format_exc()}), 500
 
     return jsonify({"msg": "Upload received and processed successfully.", "session_id": session_id}), 200
 
