@@ -51,7 +51,7 @@ if pinecone_api_key:
     if index_name not in pc.list_indexes().names():
         pc.create_index(
             name=index_name,
-            dimension=768, # Gemini embeddings are 768 dimensions
+            dimension=3072, # gemini-embedding-2-preview embeddings are 3072 dimensions
             metric="cosine",
             spec=ServerlessSpec(cloud="aws", region="us-east-1")
         )
