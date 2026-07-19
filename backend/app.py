@@ -233,7 +233,8 @@ def handle_query():
         context = "\n".join([doc.page_content for doc in docs])
     except Exception as e:
         print(f"Retriever error: {e}")
-        return jsonify({"msg": "Error retrieving context data."}), 500
+        import traceback
+        return jsonify({"msg": "Error retrieving context data.", "error": str(e), "trace": traceback.format_exc()}), 500
 
     # Save User message to DB
     user_msg = Message(session_id=session_id, role="user", content=prompt)
